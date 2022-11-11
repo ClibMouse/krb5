@@ -179,12 +179,10 @@ cbc_decr(krb5_key key, const krb5_data *ivec, krb5_crypto_iov *data,
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * ==================================================================== */
 
-typedef void (*block128_f)(const uint8_t in[16], uint8_t out[16],
+/*typedef void (*block128_f)(const uint8_t in[16], uint8_t out[16],
                            const AES_KEY *key);
-
 typedef void (*cbc128_f)(const uint8_t *in, uint8_t *out, size_t len,
                          const AES_KEY *key, uint8_t ivec[16], int enc);
-
 static size_t CRYPTO_cts128_encrypt(const unsigned char *in, unsigned char *out,
                              size_t len, const void *key,
                              unsigned char ivec[16], cbc128_f cbc)
@@ -194,20 +192,14 @@ static size_t CRYPTO_cts128_encrypt(const unsigned char *in, unsigned char *out,
         size_t align;
         unsigned char c[16];
     } tmp;
-
     if (len <= 16)
         return 0;
-
     if ((residue = len % 16) == 0)
         residue = 16;
-
     len -= residue;
-
     (*cbc) (in, out, len, key, ivec, 1);
-
     in += len;
     out += len;
-
 #if defined(CBC_HANDLES_TRUNCATED_IO)
     memcpy(tmp.c, out - 16, 16);
     (*cbc) (in, out - 16, residue, key, ivec, 1);
@@ -220,7 +212,6 @@ static size_t CRYPTO_cts128_encrypt(const unsigned char *in, unsigned char *out,
 #endif
     return len + residue;
 }
-
 static size_t CRYPTO_cts128_decrypt(const unsigned char *in, unsigned char *out,
                              size_t len, const void *key,
                              unsigned char ivec[16], cbc128_f cbc)
@@ -230,27 +221,21 @@ static size_t CRYPTO_cts128_decrypt(const unsigned char *in, unsigned char *out,
         size_t align;
         unsigned char c[32];
     } tmp;
-
     if (len <= 16)
         return 0;
-
     if ((residue = len % 16) == 0)
         residue = 16;
-
     len -= 16 + residue;
-
     if (len) {
         (*cbc) (in, out, len, key, ivec, 0);
         in += len;
         out += len;
     }
-
     memset(tmp.c, 0, sizeof(tmp));
     /*
      * this places in[16] at &tmp.c[16] and decrypted block at &tmp.c[0]
      */
-    (*cbc) (in, tmp.c, 16, key, tmp.c + 16, 0);
-
+  /*  (*cbc) (in, tmp.c, 16, key, tmp.c + 16, 0);
     memcpy(tmp.c, in + 16, residue);
 #if defined(CBC_HANDLES_TRUNCATED_IO)
     (*cbc) (tmp.c, out, 16 + residue, key, ivec, 0);
@@ -260,7 +245,6 @@ static size_t CRYPTO_cts128_decrypt(const unsigned char *in, unsigned char *out,
 #endif
     return 16 + len + residue;
 }
-
 size_t CRYPTO_cts128_decrypt_block(const unsigned char *in,
                                    unsigned char *out, size_t len,
                                    const void *key, unsigned char ivec[16],
@@ -271,27 +255,20 @@ size_t CRYPTO_cts128_decrypt_block(const unsigned char *in,
         size_t align;
         unsigned char c[32];
     } tmp;
-
     if (len <= 16)
         return 0;
-
     if ((residue = len % 16) == 0)
         residue = 16;
-
     len -= 16 + residue;
-
     if (len) {
         CRYPTO_cbc128_decrypt(in, out, len, key, ivec, block);
         in += len;
         out += len;
     }
-
     (*block) (in, tmp.c + 16, key);
-
     memcpy(tmp.c, tmp.c + 16, 16);
     memcpy(tmp.c, in + 16, residue);
     (*block) (tmp.c, tmp.c, key);
-
     for (n = 0; n < 16; ++n) {
         unsigned char c = in[n];
         out[n] = tmp.c[n] ^ ivec[n];
@@ -299,11 +276,9 @@ size_t CRYPTO_cts128_decrypt_block(const unsigned char *in,
     }
     for (residue += 16; n < residue; ++n)
         out[n] = tmp.c[n] ^ in[n];
-
     return 16 + len + residue;
 }
-
-
+*/
 static krb5_error_code
 cts_encr(krb5_key key, const krb5_data *ivec, krb5_crypto_iov *data,
          size_t num_data, size_t dlen)
