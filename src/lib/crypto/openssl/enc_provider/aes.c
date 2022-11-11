@@ -27,7 +27,9 @@
 #include "crypto_int.h"
 #include <openssl/evp.h>
 #include <openssl/aes.h>
+#ifndef __s390x__
 #include <openssl/modes.h>
+#endif
 
 /* proto's */
 static krb5_error_code
@@ -178,7 +180,7 @@ cbc_decr(krb5_key key, const krb5_data *ivec, krb5_crypto_iov *data,
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * ==================================================================== */
-
+#ifndef __s390x__
 typedef void (*block128_f)(const uint8_t in[16], uint8_t out[16],
                            const AES_KEY *key);
 
@@ -303,6 +305,7 @@ size_t CRYPTO_cts128_decrypt_block(const unsigned char *in,
     return 16 + len + residue;
 }
 
+#endif 
 
 static krb5_error_code
 cts_encr(krb5_key key, const krb5_data *ivec, krb5_crypto_iov *data,
